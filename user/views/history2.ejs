@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/icon.jpg">
+    <title>Quotation form</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+</head>
+<body style="background-color: aqua;">
+ <br> <br>
+    <div class="main">
+        <h2>Purchase Order History</h2>
+            <table class="no-border-table" style="border: 0;">
+                <tr>
+                    <th><label for="Requisition">Requisition #:</label></th>
+                    <td><%= prDetails.Requisition %></td>
+                    <th><label for="Pro_id">Project Id:</label></th>
+                    <td><%= prDetails.Pro_id %></td>
+                </tr>
+             
+                   
+            </table>
+
+            <br><br>
+            <table>
+                <thead>
+                    <th></th>
+                    <th>Submited By</th>
+                    <th>Submited Date</th>
+                </thead>
+                <tr>
+                    <td>PR</td>
+                    <td><%= prDetails.Requisitor %></td>
+                    <td><%= prDetails.date1 %></td>
+                </tr>
+                <tr>
+                    <td>Float RFQ</td>
+                    <td><%= prDetails.floatrfqraiser %></td>
+                    <td><%= prDetails.floatrfq %></td>
+                </tr>
+                <tr>
+                    <td>Submit Quote</td>
+                    <td><%= prDetails.submitquoteraiser %></td>
+                    <td><%= prDetails.submitquote %></td>
+                </tr>
+                <tr>
+                    <td>Close</td>
+                    <td><%= prDetails.closeraiser %></td>
+                    <td><%= prDetails.close %></td>
+                </tr>
+               
+            </table>
+            <br><br>
+            
+            <h3>Revised List</h3>
+            <table>
+                <thead>
+
+                    <tr>
+                        <th>Description</th>
+                        <th>Old Rate</th>
+                        <th>New Rate</th>
+                        <th>Remark</th>
+                        <th>Modified By</th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    <% if (prDetails.revisions && prDetails.revisions.length > 0) { %>
+                        <% prDetails.revisions.forEach(function(detail) { %>
+                          <tr>
+                            <td><%= detail.description || 'NIL' %></td>
+                            
+                            <td><%= detail.oldrate %></td>
+                            <td><%= detail.newrate %></td>
+                            <td><%= detail.remark %></td>
+                            <td><%= detail.modifiedBy %></td>
+                          </tr>
+                        <% }); %>
+                      <% } else { %>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                      <% } %>
+                      
+                </tbody>
+                
+            </table>
+    </div>
+
+           
+         
+    
+     
+
+ 
+</body>
+</html>

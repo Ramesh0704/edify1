@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>user Portal</title>
+    <link rel="icon" href="/icon.jpg">
+    <style>
+        .goback {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #b8e7f9;
+        }
+        .main {
+            margin: auto;
+            padding: 2%;
+            background-color: #ececec;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(11, 1, 1, 0.2);
+            width: 90%;
+        }
+        .main h2 {
+            color: #3f65c7;
+            margin-bottom: 20px;
+        }
+        img {
+            float: left;
+        }
+        .login-container {
+            display: flex;
+            justify-content: center;
+        }
+        .submit {
+            width: 100%;
+            height: 40px;
+            border: 2px solid black;
+            background-color: #3F4BBA;
+            color: white;
+            
+            border-radius: 15%;
+        }
+        .submit:hover {
+            background-color: #0056b3;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        table, th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        a {
+            color: white;
+            text-decoration: none;
+            margin-right: 3%;
+        }
+        .headtag {
+            float: right;
+        }
+        .tag {
+            margin-right: 2%;
+            float: right;
+        }
+        .tag1 {
+            margin-right: 0.5%;
+            float: right;
+        }
+        .slider {
+  -webkit-appearance: none;
+  width: 120px;
+  height: 3px;
+  background: linear-gradient(rgb(198, 165, 165), rgb(81, 48, 48));
+  outline: none;
+  border-radius: 50px;
+  margin-bottom: 2px;
+  position: relative;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(to top, rgb(122, 199, 105), rgb(59, 170, 14));
+  cursor: pointer;
+  box-shadow: 0 0.4em 0.6em rgba(46, 225, 64, 0.2);
+  position: relative;
+  z-index: 2;
+}
+.overdue-row {
+    background-color: #f8d7da;
+  font-weight: bold;
+}
+.status-table tr:hover {
+    background-color: #f2f2f2;; 
+    cursor: pointer;
+  }
+
+  .status-table th {
+    background-color: #ddd;
+  }
+
+.labels {
+  display: flex;
+  justify-content: space-between;
+  width: 150px; 
+  margin-top: 5px;
+}
+
+.labels span {
+  font-size: 12px;
+  font-weight: lighter;
+  color: rgb(12, 1, 56);
+  text-align: center;
+  flex: 1; 
+}
+.okButton {
+    width: 50px;
+    height: 25px;
+    background-color: rgb(38, 228, 246);
+    border: 1px solid rgb(24, 22, 22);
+    color: rgb(24, 22, 22);
+    border-radius: 5px;
+}
+
+.okButton:disabled {
+    background-color: #ffffff;
+    border-color: #dcdcdc; 
+    color: #a9a9a9;
+    cursor: not-allowed; 
+}
+
+.okButton:hover {
+    background-color: #3F4BBA;
+}
+.okButton:disabled:hover {
+    background-color: #ffffff; 
+}
+
+.overdue-row {
+    background-color: #f8d7da;
+  font-weight: bold;
+}
+.status-table tr:hover {
+    background-color: #f2f2f2;;
+    cursor: pointer;
+  }
+
+  .status-table th {
+    background-color: #ddd;
+  }
+
+.bauble_box {
+  display: flex;
+  justify-content: center;  
+  align-items: center;     
+  gap: 10px;              
+}
+
+.bauble_box .bauble_label {
+  background: #2c2;
+  background-position: 62px 5px;
+  background-repeat: no-repeat;
+  background-size: auto 5px;
+  border: 0;
+  border-radius: 50px;
+  box-shadow: inset 0 10px 20px rgba(0,0,0,.4), 0 -1px 0px rgba(0,0,0,.2), inset 0 -1px 0px #fff;
+  cursor: pointer;
+  display: inline-block;
+  height: 30px;
+  position: relative;
+  transition: all 500ms ease;
+  width: 70px;
+}
+
+.bauble_box .bauble_label:before {
+  background-color: rgba(255,255,255,.2);
+  background-position: 0 0;
+  background-repeat: repeat;
+  background-size: 30% auto;
+  border-radius: 50%;
+  box-shadow: inset 0 -5px 25px #050, 0 10px 20px rgba(0,0,0,.4);
+  content: '';
+  display: block;
+  height: 22px;
+  left: 5px;
+  position: absolute;
+  top: 6px;
+  transition: all 500ms ease;
+  width: 25px;
+  z-index: 2;
+}
+
+.bauble_box input.bauble_input {
+  opacity: 0;
+  z-index: 0;
+}
+
+.bauble_box input.bauble_input:checked + .bauble_label {
+  background-color: #c22;
+}
+
+.bauble_box input.bauble_input:checked + .bauble_label:before {
+  background-position: 150% 0;
+  box-shadow: inset 0 -5px 25px #500, 0 10px 20px rgba(0,0,0,.4);
+  left: calc( 100% - 35px );
+}
+
+.bauble_box .bauble_text {
+  font-size: 17px;  
+  color: #000;     
+}
+
+    </style>
+</head>
+<body>
+     <h2 style="color: #123F49;" align="center">PR Status Portal</h2>	
+    <br>
+
+    <div class="main" style="padding-right: 3%;">
+        <p>Overdue Threshold: <%= threshold %> days</p>
+      
+        <div style="float: right;">
+            <div style="margin-bottom: 10px;">
+                <img src="/green.png" alt="green" style="vertical-align: middle; margin-right: 5px;">
+                <span>Complete</span>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <img src="/yellow.png" alt="yellow" style="vertical-align: middle; margin-right: 5px;">
+                <span>In Progress</span>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <img src="/grey.png" alt="gray" style="vertical-align: middle; margin-right: 5px;">
+                <span>Not Complete</span>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <img src="/orange.png" alt="orange" style="vertical-align: middle; margin-right: 5px;">
+                <span>Revise</span>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <span style="color: red; vertical-align: middle; margin-right: 5px;">⚠️</span>
+                <span>Overdue</span>
+            </div>
+        </div>
+        <h3 align="center"  >Search Criteria</h3><br><br>
+        <div align="center" >
+            <div style="padding-right: 30%;">
+            <div style=" float: right;">
+                <label for="fromDate">From:</label>
+                <input type="date" id="fromDate" onchange="filterTable()">
+
+                <label for="toDate">To:</label>
+                <input type="date" id="toDate" onchange="filterTable()">
+                <br> <br> <br>
+                <label for="statusFilter">Status:</label>
+                <select id="statusFilter" onchange="filterTable()">
+                    <option value="">All</option>
+                    <option value="Open">Open</option>
+                    <option value="floatRFQ">Float RFQ</option>
+                    <option value="submitquote">Submit Quote</option>
+                    <option value="Revise">Revise</option>
+                    <option value="Close">Close</option>
+                </select>
+
+                <label for="adhocFilter">Adhoc/New PO:</label>
+                <select id="adhocFilter" onchange="filterTable()">
+                    <option value="">All</option>
+                    <option value="adhoc">Adhoc</option>
+                    <option value="New PO">New PO</option>
+                </select>
+               
+                <label for="requisitorFilter">Requisitor:</label>
+                <select id="requisitorFilter" onchange="filterTable()">
+                    <option value="">All</option>
+                    <% const requisitors = new Set(); %>
+                    <% statusEntries.forEach(entry => { requisitors.add(entry.Requisitor); }); %>
+                    <% [...requisitors].forEach(requisitor => { %>
+                        <option value="<%= requisitor %>"><%= requisitor %></option>
+                    <% }); %>
+                </select>
+                <br> <br> <br>
+                <label for="customerNameFilter">Customer Name:</label>
+                <select id="customerNameFilter" onchange="filterTable()">
+                    <option value="">All</option>
+                    <% const customers = new Set(); %>
+                    <% statusEntries.forEach(entry => { customers.add(entry.Customer); }); %>
+                    <% [...customers].forEach(customer => { %>
+                        <option value="<%= customer %>"><%= customer %></option>
+                    <% }); %>
+                </select>
+                
+                <label for="projectIdFilter">Project ID:</label>
+                <input type="text" id="projectIdFilter" oninput="filterTable()">
+
+                <label for="requisitionFilter">Requisition #:</label>
+                <input type="text" id="requisitionFilter" oninput="filterTable()">
+                <br><br><br>
+                <div class="bauble_box">
+                    <span class="bauble_text">Overdue⚠️</span>
+                    <input class="bauble_input" id="bauble_check" name="bauble" type="checkbox" oninput="filterTable()">
+                    <label class="bauble_label" for="bauble_check"></label> <br><br><br><br>
+                </div>
+            </div>
+                
+                <br><br>
+                </div>
+            </div>
+                <br><br>
+                <style>
+                    #statusTable {
+                        transform: scale(0.89); 
+                        transform-origin: top left;
+                        width: 100%;
+                    }
+                </style>
+            <table id="statusTable" class="status-table" >
+                <thead>
+                    <tr>
+                        <th rowspan="2">Sl No</th>
+                        <th rowspan="2">Issue Date</th>
+                        <th rowspan="2">Updated On</th>
+                        <th rowspan="2">Requisition#</th>
+                        <th rowspan="2">Customer Name</th>
+                        <th rowspan="2">Project Id</th>
+                        <th rowspan="2">Requisitor</th>
+                        <th rowspan="2">Adhoc/New PO</th> 
+                        <th colspan="5">Status</th>
+                       
+                        <th rowspan="2">History</th>
+                        <th rowspan="2">Action</th>
+                    </tr>
+                    <tr>
+                        <td>Open</td>
+                        <td>Float RFQ</td>
+                        <td>Submit Quote</td>
+                        <td>Close</td>
+                        <td>Overdue</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% statusEntries.forEach((entry, index) => { %>
+                        <tr class="<%= entry.status === 'overdue' ? 'overdue-row' : '' %>">
+                        
+                        <td><%= index + 1 %></td>
+                        <td><%= entry.date %></td>
+                        <td><%= entry.updatedOn %></td>
+                        <td id="requisition1"><%= entry.Requisition %></td>
+                        <td><%= entry.Customer %></td>
+                        <td><%= entry.Pro_id %></td>
+                        <td><%= entry.Requisitor %></td>
+                        <td><%= entry.adhoc %></td>
+                        <td hidden ><%= entry.Status %></td>
+                        <td style="padding-left: 2%;"><img src="/green.png" alt="Open"></td>
+                        
+
+
+
+                        
+                            <% if (entry.Status === 'open') { %>
+                                <td style="padding-left: 2%;"><img src="/yellow.png" alt="Open"></td>
+                                
+                                <td style="padding-left: 2%;"><img src="/grey.png" alt="Open"></td>
+                                <td style="padding-left: 2%;"><img src="/grey.png" alt="Open"></td>
+                                
+                            <% } 
+                             %>
+
+                             <% if (entry.Status === 'floatRFQ') { %>
+                                <td style="padding-left: 2%;"><img src="/green.png" alt="Open"></td>
+                                <td style="padding-left: 2%;"><img src="/yellow.png" alt="Open"></td>
+                                <td style="padding-left: 2%;"><img src="/grey.png" alt="Open"></td>
+                                
+                            <% } 
+                             %>
+                             <% if (entry.Status === 'submitquote') { %>
+                                <td style="padding-left: 2%;"><img src="/green.png" alt="Open"></td>
+                                <td style="padding-left: 2%;"><img src="/green.png" alt="Open"></td>
+                                <td style="padding-left: 2%;"><img src="/yellow.png" alt="Open"></td>
+                                
+                            <% } 
+                            %>
+                            <% if (entry.Status === 'close') { %>
+                                <td style="padding-left: 2%;"><img src="/green.png" alt="Open"></td>
+                                <td style="padding-left: 2%;"><img src="/green.png" alt="Open"></td>
+                                <td style="padding-left: 2%;"><img src="/green.png" alt="Open"></td>
+                                
+                            <% } 
+                            %>
+                            <% if (entry.Status === 'Revise') { %>
+                                <td style="padding-left: 2%;"><img src="/green.png" alt="Open"></td>
+                                <td style="padding-left: 2%;"><img src="/yellow.png" alt="Open"></td>
+                                <td style="padding-left: 2%;"><img src="/orange.png" alt="Open"></td>
+                                
+                            <% } 
+                            %>
+                            <% if (entry.Status === 'adhoc') { %>
+                                <td style="padding-left: 2%;"><img src="/green.png" alt="Open"></td>
+                                <td style="padding-left: 2%;"><img src="/green.png" alt="Open"></td>
+                                <td style="padding-left: 2%;"><img src="/green.png" alt="Open"></td>
+                                
+                            <% } 
+                            %>
+                           
+                           
+                           
+           <td hidden><%= entry.status %></td>
+           <td title="<%= entry.status === 'overdue' ? 'This item is overdue.' : '' %>">
+            <% if (entry.status === 'overdue') { %>
+              <span style="color: red;">⚠️</span>
+            <% } else { %>
+             
+            <% } %>
+          </td>
+                            
+                            <td>
+                                <img src="/eyeicon.png" alt="icon" style="padding-left: 30%; cursor: pointer;"
+                                     onclick="openPopup('<%= entry.Requisition %>')">
+                            </td>
+                            
+                            <div id="popupModal" style="display:none; position:fixed; top:20%; left:30%; width:50%; height:70%; padding:20px; background:#fff; border:1px solid #ccc; z-index:1000; box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3); border-radius: 10px;">
+                                <span style="float:right; cursor:pointer;" onclick="closePopup()">✖</span>
+                                <div id="popupContent" style="overflow:auto; height: calc(100% - 40px);">Loading...</div>
+                            </div>
+                            
+                            <div id="overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:black; opacity:0.5; z-index:999;"></div>
+                            
+                            <script>
+                                function openPopup(requisitionId) {
+                                  
+                                    document.getElementById('overlay').style.display = 'block';
+                                    document.getElementById('popupModal').style.display = 'block';
+                                  
+                                    fetch(`/user/history/${requisitionId}`)
+                                        .then(response => response.text())
+                                        .then(html => {
+                                            document.getElementById('popupContent').innerHTML = html;
+                                        })
+                                        .catch(err => {
+                                            document.getElementById('popupContent').innerHTML = 'Error loading content.';
+                                            console.error(err);
+                                        });
+                                }
+                              
+                                function closePopup() {
+                                    document.getElementById('popupModal').style.display = 'none';
+                                    document.getElementById('overlay').style.display = 'none';
+                                }
+                            </script>
+                              
+                            
+                            
+                          
+                            
+                            
+                            
+                            
+                            
+                            
+                           
+                            
+                            
+                            <td><button class="submit" onclick="redirectBasedOnStatus('<%= entry.Status %>', '<%= entry.Requisition %>','<%= entry.DPC %>','<%= entry.dpcver %>')">Action</button></td>
+
+                    </tr>
+                    <% }); %>
+                </tbody>
+               
+            </table>
+        </div>
+        <br><br>
+    </div>
+    
+    <script>
+          function redirectBasedOnStatus(status, reqe,dpc,dpcver) {
+            
+                window.location.href = `/user/check/${reqe}`;
+            }
+           
+          
+       
+   
+
+function goBack() {
+    console.log("Go Back button clicked");
+}
+
+        function navigateTo(url) {
+            window.location.href = url;
+        }
+
+        history.pushState(null, null, location.href);
+
+        window.addEventListener('popstate', function(event) {
+            window.location.href = '/user/logout'; 
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Backspace' && event.target.nodeName !== 'INPUT' && event.target.nodeName !== 'TEXTAREA') {
+                event.preventDefault();
+            }
+        });
+</script>
+    </div>
+    
+    <script>
+        function filterTable() {
+            const fromDate       = document.getElementById("fromDate").value;
+            const toDate         = document.getElementById("toDate").value;
+            const statusFilter   = document.getElementById("statusFilter").value.toLowerCase();
+            const adhocFilter    = document.getElementById("adhocFilter").value.toLowerCase();
+            const requisitorFilter = document.getElementById("requisitorFilter").value.toLowerCase();
+            const customerFilter   = document.getElementById("customerNameFilter").value.toLowerCase();
+            const projectIdFilter  = document.getElementById("projectIdFilter").value.toLowerCase();
+            const requisitionFilter= document.getElementById("requisitionFilter").value.toLowerCase();
+        
+         
+            const overdueFilter = document.getElementById("bauble_check").checked;
+    
+            const rows = document
+                .getElementById("statusTable")
+                .querySelectorAll("tbody tr");
+    
+            let index = 1; 
+    
+            rows.forEach((row, idx) => {
+                const cols = row.querySelectorAll("td");
+                const cells = row.cells;
+                const issueDate = cols[1].textContent.trim();
+                const status    = cols[8]?.textContent.trim().toLowerCase();
+                const adhoc     = cols[7]?.textContent.trim().toLowerCase();
+                const requisitor= cols[6]?.textContent.trim().toLowerCase();
+                const customer  = cols[4]?.textContent.trim().toLowerCase();
+                const projId    = cols[5]?.textContent.trim().toLowerCase();
+                const requis    = cols[3]?.textContent.trim().toLowerCase();  
+                const status1    = cols[15]?.textContent.trim().toLowerCase();
+                let show = true;
+                if (fromDate && new Date(issueDate) < new Date(fromDate)) show = false;
+                if (toDate   && new Date(issueDate) > new Date(toDate))   show = false;
+                if (statusFilter   && status    !== statusFilter)   show = false;
+                if (adhocFilter    && adhoc     !== adhocFilter)    show = false;
+                if (requisitorFilter && requisitor !== requisitorFilter) show = false;
+                if (customerFilter   && customer !== customerFilter)   show = false;
+                if (projectIdFilter  && !projId.includes(projectIdFilter)) show = false;
+                if (requisitionFilter && !requis.includes(requisitionFilter)) show = false;
+    
+                if (overdueFilter && status1 !== "overdue") show = false;
+    
+                row.style.display = show ? "" : "none";
+    
+                if (show) {
+                    row.cells[0].textContent = index; 
+                    index++; 
+                }
+            });
+        }
+    </script>
+</body>
+</html>

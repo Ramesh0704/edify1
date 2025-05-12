@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Verification</title>
+    <link rel="icon" href="/icon.jpg">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #b8e7f9;
+        }
+        .main {
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #ececec;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(11, 1, 1, 0.2);
+            width: 90%;
+            max-width: 1000px;
+        
+        }
+        .main h2 {
+            color: #3f65c7;
+            margin-bottom: 20px;
+        }
+        img {
+            float: left;
+        }
+        .edify {
+            clear: left;
+            padding: -30%;
+        }
+        .submit {
+            color: #ffffff;
+            background-color: #1B4CFB;
+            padding: 4%;
+        }
+        .goback {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            height: 9%;
+            width: 5%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .submit1 {
+            color: #ffffff;
+            background-color: #1B4CFB;
+            border: none;
+            padding: 4% 8%;
+            cursor: pointer;
+        }
+        a {
+            float: right;
+            margin-right: 3%;
+        }
+        .headtag {
+            float: right;
+        }
+        .tag {
+            margin-right: 2%;
+            float: right;
+        }
+        .tag1 {
+            margin-right: 0.5%;
+            float: right;
+        }
+    </style>
+    <script>
+        // Push a new state to the history stack
+        history.pushState(null, null, location.href);
+
+        window.addEventListener('popstate', function(event) {
+            // Redirect to the logout endpoint or any other desired page
+            window.location.href = '/superadmin/logout';
+        });
+
+        // Optional: Prevent default action for backspace key to avoid navigating back
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Backspace' && event.target.nodeName !== 'INPUT' && event.target.nodeName !== 'TEXTAREA') {
+                event.preventDefault();
+            }
+        });
+
+        function goBack() {
+        }
+
+        function approveUser(empId, level) {
+            fetch('/superadmin/approveUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ empId, level })
+            }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('User approved successfully');
+                    location.reload();
+                } else {
+                    alert('Error approving user');
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Error approving user');
+            });
+        }
+    </script>
+</head>
+<body>
+  <br><br>
+  <h2 align="center" style="color: #123F49;" align="center">User Verification</h2>
+  <br><br>
+
+    <div class="main">
+        <br><br>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Sl No</th>
+                    <th>User Name</th>
+                    <th>Emp ID</th>
+                    <th>Email</th>
+                    <th>Level</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach((user, index) => { %>
+                    <tr>
+                        <td><%= index + 1 %></td>
+                        <td><%= user.username %></td>
+                        <td><%= user.empid %></td>
+                        <td><%= user.email %></td>
+                        <td>
+                            <input type="radio" name="level<%= index %>" value="1">User
+                            <input type="radio" name="level<%= index %>" value="2">Admin
+                        </td>
+                        <td><button class="submit1" onclick="approveUser('<%= user.empid %>', document.querySelector('input[name=level<%= index %>]:checked').value)"  style="padding: 12%;">Approve</button></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+   
+</body>
+</html>

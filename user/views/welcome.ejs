@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome Page</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #e3f2fd);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 50px 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      width: 400px;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    .icon {
+      font-size: 60px;
+      color: #2563eb;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      margin: 0;
+      color: #1e3a8a;
+    }
+
+    .username {
+      color: #2563eb;
+      font-weight: bold;
+    }
+
+    p {
+      color: #444;
+      font-size: 16px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="icon">👋</div>
+    <h2>Welcome, <span class="username"><%= username %></span></h2>
+    <p>You're logged into the EDIFY User Portal.</p>
+    <p>Use the sidebar to manage requisitions and view status updates.</p>
+  </div>
+
+</body>
+</html>

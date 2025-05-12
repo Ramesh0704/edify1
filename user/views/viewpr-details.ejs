@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/icon.jpg">
+    <title>Purchase Order Form</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #b8e7f9;
+        }
+        .main {
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ececec;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(190, 156, 18, 0.2);
+            width: 90%;
+        }
+        .main h2 {
+            color: #3f65c7;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        .no-border-table, .no-border-table th, .no-border-table td {
+            border: none;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .submit, button {
+            background-color: #094af1;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .submit:hover, button:hover {
+            background-color: #2f4aa8;
+        }
+        #csvFileInput {
+            display: none;
+        }
+        .goback {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+        }
+        .dateformat {
+            padding-left: 6%;
+            padding-right: 6%;
+            border: 1px solid black;
+        }
+        a{
+            float:right;
+            margin-right: 3%;
+        }
+        .headtag{
+            float:right;
+        }
+        .tag{
+            margin-right: 2%;
+            float:right;
+        }
+        .tag1{
+            margin-right: 0.5%;
+            float:right;
+        }
+    </style>
+    <script>
+        // Push a new state to the history stack
+        history.pushState(null, null, location.href);
+    
+        window.addEventListener('popstate', function(event) {
+            // Redirect to the logout endpoint or any other desired page
+            window.location.href = '/user/logout';
+        });
+    
+        // Optional: Prevent default action for backspace key to avoid navigating back
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Backspace' && event.target.nodeName !== 'INPUT' && event.target.nodeName !== 'TEXTAREA') {
+                event.preventDefault();
+            }
+        });
+    </script>
+    <script>
+        function goBack() {
+            window.location.href = '/user/wecome';
+        }
+    </script>
+</head>
+<body> <br><br><br>
+    <h2 style="color: #123F49;" align="center">Purchase Requisition Form</h2>
+    <div class="main">
+        
+        <div>
+            <form border="0">
+                <td>
+                    <input type="date" id="date" name="date" value="" required class="dateformat" disabled style="float: right; padding-left: 1%; padding-right: 1%; margin-left: 1%;" />
+                </td>
+                <td>
+                    <label for="date" style="float: right;">Date:</label>
+                </td>
+            </form>
+        </div>
+        <form id="purchaseForm" action="/user/submit" method="post">
+            <table class="no-border-table">
+                <tr>
+                    <td><label for="Customer">Customer Name:<b style="color: red;">*</b></label></td>
+                    <td><input type="text" id="Customer" name="Customer" value="<%= prDetails.Customer %>" required /></td>
+                    <td></td>
+                    <td><label for="Pro_id">Project Id:<b style="color: red;">*</b></label></td>
+                    <td><input type="text" id="Pro_id" name="Pro_id" value="<%= prDetails.Pro_id %>" required /></td>
+                </tr>
+                <tr>
+                    <td><input type="text" id="Requisitor" name="Requisitor" value="<%= username %>" hidden/></td>
+                    <td></td>
+                
+                </tr>
+            </table>
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Sl No</th>
+                        <th>Part No</th>
+                        <th>Description</th>
+                        <th>Manufacture No</th>
+                        <th>Supplier</th>
+                        <th>Qty</th>
+                        <th>Need by Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% descriptions.forEach((desc, index) => { %>
+                    <tr>
+                        <td><%= index + 1 %></td>
+                        <td><input type="text" class="part_no" name="part_no[]" value="<%= prDetails.Part_No[index] %>"></td>
+                        <td><input type="text" class="description" name="description[]" value="<%= prDetails.description[index] %>" required></td>
+                        <td><input type="text" class="manufacture" name="manufacture[]" value="<%= prDetails.manufacture[index] %>"></td>
+                        <td><input type="text" class="supplier" name="supplier[]" value="<%= prDetails.supplier[index] %>"></td>
+                        <td><input type="number" class="qty" name="qty[]" min="1" value="<%= prDetails.Qty[index] %>" required></td>
+                        <td> <input type="number" min="1" name="Rate[]" hidden value="">
+                            <input type="number" name="Total[]" hidden value="">
+                           
+                                <textarea name="remark[]" rows="2" cols="30" hidden></textarea>
+                           
+                                <input type="hidden" name="status[]" class="statusInput" value="">
+                          
+                                <input type="file" name="quote_pdf[]" hidden value='' accept="application/pdf" style="background-color: #9ed0b7; padding: 6px;">
+                          <input type="date" class="NEED" name="NEED[]" value="<%= prDetails.Need_by_date[index] %>"></td>
+                        <td><button type="button" class="deleteRow" style="background-color: red;">Delete</button></td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+            <br>
+            <input type="text" name="status1" value="open" style="display: none;" />
+            <br>
+            <button type="button" id="addRow">Add Row</button>
+            <button type="button" id="importCsv">Import CSV</button>
+            <button type="button" id="exportCsv">Export CSV</button>
+            <button type="button" id="clearAll">Clear All</button>
+            <br><br>
+            <input type="submit" value="Submit" class="submit" style="float: right;">
+            <button type="button" id="saveButton" style="float: right; margin-right: 2%;">Save</button>
+        </form>
+        <br><br><br><br>
+    </div>
+    
+    <script>
+        $("#saveButton").click(function(event) {
+            event.preventDefault(); 
+            let customerName = $("#Customer").val().trim();
+            let projectId = $("#Pro_id").val().trim();
+
+            if (!customerName || !projectId) {
+                alert("Please fill out the Customer Name and Project Id fields.");
+                return; 
+            }
+
+            let formData = $('#purchaseForm').serializeArray();
+            formData.push({name: 'action', value: 'save'});
+
+            // Send the data via AJAX
+            $.ajax({
+                url: '/user/save', // Endpoint to handle the save action
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    alert("Form saved successfully!");
+                    window.location.href = "/user/welcome";
+                },
+                error: function(xhr, status, error) {
+                    alert("An error occurred while saving the form.");
+                }
+            });
+        });
+    </script>
+   
+    <script>
+        $(document).ready(function() {
+            document.getElementById('date').valueAsDate = new Date();
+            let rowCount = $("#dataTable tbody tr").length;
+
+            $("#purchaseForm").on('submit', function(event) {
+                if (rowCount === 0) {
+                    event.preventDefault();
+                    alert("No rows are inserted");
+                } else {
+                    let formData = $('#purchaseForm').serializeArray();
+                    formData.push({ name: 'action', value: 'submit' });
+                    $.ajax({
+                        url: '/usker/submit', // Endpoint to handle form submission
+                        method: 'POST',
+                        data: formData,
+                        success: function(response) {
+                            // Handle the response here
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error("Error submitting form: ", textStatus, errorThrown);
+                        }
+                    });
+                }
+            });
+
+            $("#addRow").click(function() {
+                rowCount++;
+                $("#dataTable tbody").append(
+                    `<tr>
+                        <td class="si-no">${rowCount}</td>
+                        <td><input type="text" class="part_no" name="part_no[]" /></td>
+                        <td><input type="text" class="description" name="description[]" required /></td>
+                        <td><input type="text" class="manufacture" name="manufacture[]" /></td>
+                        <td><input type="text" class="supplier" name="supplier[]" /></td>
+                        <td><input type="number" class="qty" name="qty[]" min="1" required /></td>
+                        <td> <input type="number" min="1" name="Rate[]" hidden value="">
+                        <input type="number" name="Total[]" hidden value="">
+                       
+                            <textarea name="remark[]" rows="2" cols="30" hidden></textarea>
+                       
+                            <input type="hidden" name="status[]" class="statusInput" value="">
+                      
+                            <input type="file" name="quote_pdf[]" hidden value='' accept="application/pdf" style="background-color: #9ed0b7; padding: 6px;">
+                      <input type="date" class="NEED" name="NEED[]" /></td>
+                        <td><button type="button" class="deleteRow" style="background-color: red;">Delete</button></td>
+                    </tr>`
+                );
+            });
+
+            $(document).on('click', '.deleteRow', function() {
+                $(this).closest('tr').remove();
+                rowCount--;
+                updateRowNumbers();
+            });
+
+            $("#importCsv").click(function() {
+                let input = $('<input type="file" id="csvFileInput" accept=".csv">');
+                input.click();
+                input.change(function(event) {
+                    let file = event.target.files[0];
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        let csvData = e.target.result;
+                        let rows = csvData.split('\n');
+                        rows.forEach(function(row, index) {
+                            let cells = row.split(',');
+                            if (cells.length > 1 && index > 0) {
+                                rowCount++;
+                                $("#dataTable tbody").append(
+                                    `<tr>
+                                        <td class="si-no">${rowCount}</td>
+                                        <td><input type="text" class="part_no" name="part_no[]" value="${cells[0]}" /></td>
+                                        <td><input type="text" class="description" name="description[]" value="${cells[1]}" required /></td>
+                                        <td><input type="text" class="manufacture" name="manufacture[]" value="${cells[2]}" /></td>
+                                        <td><input type="text" class="supplier" name="supplier[]" value="${cells[3]}" /></td>
+                                        <td><input type="number" class="qty" name="qty[]" min="1" value="${cells[4]}" required /></td>
+                                        <td><input type="date" class="NEED" name="NEED[]" value="${cells[5]}" /></td>
+                                        <td><button type="button" class="deleteRow" style="background-color: red;">Delete</button></td>
+                                    </tr>`
+                                );
+                            }
+                        });
+                    };
+                    reader.readAsText(file);
+                });
+            });
+
+            $("#exportCsv").click(function() {
+                let csvContent = "data:text/csv;charset=utf-8,";
+                let rows = $("#dataTable tbody tr");
+                rows.each(function() {
+                    let row = $(this);
+                    let cells = row.find("input").map(function() {
+                        return $(this).val();
+                    }).get();
+                    csvContent += cells.join(",") + "\n";
+                });
+                let encodedUri = encodeURI(csvContent);
+                let link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "data.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            $("#clearAll").click(function() {
+                $("#dataTable tbody").empty();
+                rowCount = 0;
+            });
+
+            function updateRowNumbers() {
+                $("#dataTable tbody tr").each(function(index) {
+                    $(this).find('.si-no').text(index + 1);
+                });
+            }
+
+            $("#saveButton").click(function() {
+                let formData = $('#purchaseForm').serializeArray();
+                formData.push({ name: 'action', value: 'save' });
+                $.ajax({
+                    url: '/user/save',
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        alert("form succesfully saved");
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error("Error saving form: ", textStatus, errorThrown);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Date Min Example</title>
+</head>
+<body>
+  <form>
+    <input type="date" class="NEED" name="NEED[]" />
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const today = new Date().toISOString().split('T')[0];
+      document.querySelectorAll(".NEED").forEach(input => {
+        input.min = today;
+      });
+    });
+  </script>
+</body>
+</html>

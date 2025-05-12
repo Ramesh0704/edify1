@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/icon.jpg">
+    <title>Purchase Order Form</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #b8e7f9;
+        }
+        .main {
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ececec;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(190, 156, 18, 0.2);
+            width: 90%;
+        }
+        .main h2 {
+            color: #3f65c7;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        .no-border-table, .no-border-table th, .no-border-table td {
+            border: none;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .submit, button {
+            background-color: #094af1;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .submit:hover, button:hover {
+            background-color: #2f4aa8;
+        }
+        #csvFileInput {
+            display: none;
+        }
+        .goback {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+        }
+        .dateformat{
+            padding-left: 6%;
+            padding-right: 6%;
+            border: 1px solid black;
+        }
+        
+        a{
+            float:right;
+            margin-right: 3%;
+        }
+        .headtag{
+            float:right;
+        }
+        .tag{
+            margin-right: 2%;
+            float:right;
+        }
+        .tag1{
+            margin-right: 0.5%;
+            float:right;
+        }
+    </style>
+    <script>
+       
+    
+        // Push a new state to the history stack
+        history.pushState(null, null, location.href);
+    
+        window.addEventListener('popstate', function(event) {
+            // Redirect to the logout endpoint or any other desired page
+            window.location.href = '/user/logout';
+        });
+    
+        // Optional: Prevent default action for backspace key to avoid navigating back
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Backspace' && event.target.nodeName !== 'INPUT' && event.target.nodeName !== 'TEXTAREA') {
+                event.preventDefault();
+            }
+        });
+    </script>
+    <script>
+        function goBack() {
+        }
+    </script>
+</head>
+<body>
+    <br><br><br>
+    <h2 style="color: #123F49;" align="center">Purchase Requisition Form</h2>
+    <div class="main">
+        
+        <div>
+            <form  border="0">
+                <td><input type="date" id="date" name="date" value="" required  class="dateformat" disabled style="float: right; padding-left: 1%;padding-right: 1%; margin-left: 1%;"/></td>
+                <td><label for="date" style="float: right;">Date:</label></td>
+            </form>
+        </div>
+        <form id="purchaseForm" action="/user/submit" method="post">
+            <table class="no-border-table">
+                <tr>
+                    <td><label for="Customer">Customer Name:<b style="color: red;">*</b></label></td>
+                    <td><input type="text" id="Customer" name="Customer" required/></td>
+                    <td></td>
+                    <td><label for="Pro_id">Project Id:<b style="color: red;">*</b></label></td>
+                    <td><input type="text" id="Pro_id" name="Pro_id" required/></td>
+                    
+                </tr>
+                <tr>
+                    <td><input type="text" id="Requisitor" name="Requisitor" value="<%= username %>" hidden/></td>
+                    <td></td>
+                
+                </tr>
+                
+                
+            </table>
+            
+            <table id="dataTable" class="">
+                <thead>
+                    <tr>
+                        <th>Sl No</th>
+                        <th>Part No</th>
+                        <th>Description <b style="color: red;">*</b> </th>
+                        <th>Manufacture No</th>
+                        <th>Supplier</th>
+                        <th>Qty<b style="color: red;">*</b> </th>
+                        <th>Need by Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                </tbody>
+            </table>
+            <br>
+            <input type="text" name="status1" value="open" style="display: none;" />
+            <br>
+
+            <button type="button" id="addRow">Add Row</button>
+            <button type="button" id="importCsv">Import CSV</button>
+            <button type="button" id="exportCsv">Export CSV</button>
+            <button type="button" id="clearAll">Clear All</button> <br><br>
+            <input type="submit" value="Submit" class="submit" style="float: right; " > 
+            <button type="button" id="saveButton" style="float: right; margin-right: 2%;">Save</button>
+        </form>
+        <br><br> <br><br>
+    </div>
+    <script>
+        $("#saveButton").click(function(event) {
+            event.preventDefault(); 
+            let customerName = $("#Customer").val().trim();
+            let projectId = $("#Pro_id").val().trim();
+
+            if (!customerName || !projectId) {
+                alert("Please fill out the Customer Name and Project Id fields.");
+                return; 
+            }
+
+            let formData = $('#purchaseForm').serializeArray();
+            formData.push({name: 'action', value: 'save'});
+            $.ajax({
+                url: '/user/save', 
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    alert("Form saved successfully!");
+                    window.location.href = "/user/welcome";
+                },
+                error: function(xhr, status, error) {
+                    alert("An error occurred while saving the form.");
+                }
+            });
+        });
+    </script>
+   
+    <script>
+        document.getElementById('date').valueAsDate = new Date(); 
+
+    </script>
+    <script>
+        $(document).ready(function(){
+            let rowCount = 0;
+            $("#purchaseForm").on('submit', function(event) {
+                if (rowCount === 0) {
+                    event.preventDefault();
+                    alert("No rows are inserted");
+                }
+                else{
+                    let formData = $('#purchaseForm').serializeArray();
+                 formData.push({name: 'action', value: 'submit'});
+             $.ajax({
+              url: '/usewr/submit', // Endpoint to handle form submission
+               method: 'POST',
+          data: formData,
+          
+});
+                }
+            });
+            $("#addRow").click(function () {
+    rowCount++;
+    const today = new Date().toISOString().split('T')[0];
+    const newRow = `
+        <tr>
+            <td class="si-no">${rowCount}</td>
+            <td><input type="text" class="part_no" name="part_no[]" /></td>
+            <td><input type="text" class="description" name="description[]" required/></td>
+            <td><input type="text" class="manufacture" name="manufacture[]" /></td>
+            <td><input type="text" class="supplier" name="supplier[]" /></td>
+            <td><input type="number" class="qty" name="qty[]" min=1 required/></td>
+            <td> 
+                <input type="number" min="1" name="Rate[]" hidden value="">
+                <input type="number" name="Total[]" hidden value="">
+                <textarea name="remark[]" rows="2" cols="30" hidden></textarea>
+                <input type="hidden" name="status[]" class="statusInput" value="">
+                <input type="file" name="quote_pdf[]" hidden accept="application/pdf" style="background-color: #9ed0b7; padding: 6px;">
+                <input type="date" class="NEED" name="NEED[]" min="${today}" />
+            </td>
+            <td><button type="button" class="deleteRow" style="background-color: red;">Delete</button></td>
+        </tr>`;
+    $("#dataTable tbody").append(newRow);
+});
+
+
+            // Delete row from the table
+            $("#dataTable").on('click', '.deleteRow', function(){
+                if (rowCount > 1) {
+                    $(this).closest('tr').remove();
+                    rowCount--;
+                    updateRowNumbers();
+                }
+            });
+
+            // Export table data to CSV file
+            $("#exportCsv").click(function(){
+                let csv = [];
+                const rows = $("#dataTable tbody tr");
+
+                // Get headers
+                const headers = $("#dataTable thead th").map(function(){
+                    return $(this).text().trim();
+                }).get();
+                headers.pop();// Remove the last header ("Actions")
+                csv.push(headers.join(","));
+
+                // Get data rows
+                rows.each(function(){
+                    let rowData = [];
+                    $(this).find("td:not(:last-child)").each(function(){
+                        if ($(this).find("input").length > 0) {
+                            rowData.push($(this).find("input").val());
+                        } else {
+                            rowData.push($(this).text());
+                        }
+                    });
+                    csv.push(rowData.join(","));
+                });
+
+                // Download CSV file
+                downloadCSV(csv.join("\n"), 'purchase_order.csv');
+            });
+
+            // Import CSV data on button click
+            $("#importCsv").click(function() {
+                const csvFileInput = $("<input type='file' accept='.csv' style='display:none;'>");
+                csvFileInput.on('change', function(e) {
+                    const file = e.target.files[0];
+                    if (!file) {
+                        console.error("No file selected.");
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const csvData = event.target.result;
+                        processCSV(csvData);
+                    };
+                    reader.onerror = function() {
+                        console.error("Could not read the file.");
+                    };
+                    reader.readAsText(file);
+                });
+
+                csvFileInput.trigger('click');
+            });
+
+            // Process CSV data and populate table
+            function processCSV(csvData) {
+                const rows = csvData.split("\n").map(row => row.trim()).filter(row => row.length > 0);
+
+                // Populate table with CSV data, skipping the first row
+                rows.forEach((row, index) => {
+                    if (index > 0) { // Skip the first row
+                        const columns = row.split(",");
+                        if (columns.length === 7) { // Adjusted for the number of columns
+                            rowCount++;
+                            const [siNo, partNo, description, manufacture, supplier, qty, needByDate] = columns;
+                            // Assuming needByDate is in dd-mm-yyyy format, convert it to yyyy-mm-dd for input[type=date]
+                            const formattedDate = formatDate(needByDate);
+                            const today = new Date().toISOString().split('T')[0]; // Function to format date
+                            $("#dataTable tbody").append(
+                                `<tr>
+                                    <td class="si-no">${rowCount}</td>
+                                    <td><input type="text" class="part_no" name="part_no[]" value="${partNo}" /></td>
+                                    <td><input type="text" class="description" name="description[]" value="${description}" required/></td>
+                                    <td><input type="text" class="manufacture" name="manufacture[]" value="${manufacture}" /></td>
+                                    <td><input type="text" class="supplier" name="supplier[]" value="${supplier}" /></td>
+                                    <td><input type="number" class="qty" name="qty[]" min=1 value="${qty}" required/></td>
+                                    <td> <input type="number" min="1" name="Rate[]" hidden value="">
+                        <input type="number" name="Total[]" hidden value="">
+                       
+                            <textarea name="remark[]" rows="2" cols="30" hidden></textarea>
+                       
+                            <input type="hidden" name="status[]" class="statusInput" value="">
+                      
+                            <input type="file" name="quote_pdf[]" hidden value='' accept="application/pdf" style="background-color: #9ed0b7; padding: 6px;">
+             
+                         <input type="date" class="NEED" name="NEED[]" min="${today}" value="${formattedDate}" />
+                                    <td><button type="button" class="deleteRow" style="background-color: red;">Delete</button></td>
+                                </tr>`
+                            );
+                        } else {
+                            console.error(`Row ${index + 1} has an incorrect number of columns: ${columns.length}`);
+                        }
+                    }
+                });
+
+                updateRowNumbers();
+            }
+
+            // Clear all rows from the table
+            $("#clearAll").click(function() {
+                $("#dataTable tbody tr:not(:first-child)").remove();
+                rowCount = 0; // Reset row count if needed
+                updateRowNumbers();
+            });
+
+            // Function to format date from dd-mm-yyyy to yyyy-mm-dd
+            function formatDate(dateString) {
+                if (!dateString) return ''; // Return empty string or handle default case as needed
+                const [dd, mm, yyyy] = dateString.split('-');
+                return `${yyyy}-${mm}-${dd}`;
+            }
+
+            // Update row numbers after adding or removing rows
+            $("#clearAll").click(function() {
+    $("#dataTable tbody tr").remove();
+         rowCount = 0; // Reset row count if needed
+         updateRowNumbers();
+});
+            function updateRowNumbers() {
+                $("#dataTable tbody tr").each(function(index) {
+                    $(this).find('.si-no').text(index + 1);
+                });
+            }
+
+            // Function to download CSV file
+            function downloadCSV(csv, filename) {
+                let csvFile;
+                let downloadLink;
+
+                // CSV file
+                csvFile = new Blob([csv], { type: 'text/csv' });
+
+                // Download link
+                downloadLink = document.createElement('a');
+
+                // File name
+                downloadLink.download = filename;
+
+                // Create a link to the file
+                downloadLink.href = window.URL.createObjectURL(csvFile);
+
+                // Hide download link
+                downloadLink.style.display = 'none';
+
+                // Add the link to DOM
+                document.body.appendChild(downloadLink);
+
+                // Click download link
+                downloadLink.click();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/icon.jpg" />
+  <title>Purchase Order Form</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #b8e7f9;
+  }
+
+  .main {
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ececec;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(190, 156, 18, 0.2);
+    width: 85%;
+  }
+
+  .main h2 {
+    color: #3f65c7;
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: bold;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  th, td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ccc;
+  }
+
+  .no-border-table, .no-border-table th, .no-border-table td {
+    border: none;
+  }
+
+  input[type="text"], input[type="number"], input[type="date"], input[type="file"] {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .submit, button {
+    background-color: #094af1;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .submit:hover, button:hover {
+    background-color: #2f4aa8;
+  }
+
+  .goback {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+  }
+
+  a {
+    float: right;
+    margin-right: 3%;
+  }
+
+  .headtag {
+    float: right;
+  }
+
+  .tag {
+    margin-right: 2%;
+    float: right;
+  }
+
+  .tag1 {
+    margin-right: 0.5%;
+    float: right;
+  }
+
+  .dateformat {
+    padding-left: 6%;
+    padding-right: 6%;
+    border: 1px solid black;
+  }
+
+  </style>
+</head>
+<body>
+  <br><br><br>
+  <h2 style="color: #123F49;" align="center">Adhoc Purchase Requisition Form</h2>	
+  <br> 
+  <div class="main">
+    <div>
+        <form border="0">
+            <td>
+                <input type="date" id="date" name="date" required class="dateformat" disabled 
+                       style="float: right; padding-left: 1%; padding-right: 1%; margin-left: 1%;width: 10%;"/>
+            </td>
+            <td>
+                <label for="date" style="float: right;">Date:</label>
+            </td>
+        </form>
+    </div><br><br>
+    
+    <script>
+        // Get today's date in yyyy-mm-dd format
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months start at 0!
+        const dd = String(today.getDate()).padStart(2, '0');
+        const formattedToday = `${yyyy}-${mm}-${dd}`;
+    
+        // Set the value of the date input
+        document.getElementById('date').value = formattedToday;
+    </script>
+    <script>
+      function validateForm() {
+        const rowCount = document.querySelectorAll("#dataTable tbody tr").length;
+        if (rowCount < 1) {
+          alert("Please add at least one row before submitting the form.");
+          return false;
+        }
+        return true;
+      }
+    </script>
+    
+    <form id="purchaseForm" action="/user/submit1" method="post"  enctype="multipart/form-data"  onsubmit="return validateForm();">
+
+        <table class="no-border-table" style="width: 100%; margin-bottom: 20px;">
+            <tr>
+                <td style="width: 15%; padding-right: 10px;">
+                  <label for="Customer">Customer Name:<b style="color: red;">*</b></label>
+                </td>
+                <td style="width: 20%;">
+                  <input type="text" id="Customer" name="Customer" required style="width: 80%;" />
+                </td>
+                <td style="width: 15%; padding-right: 10px; text-align: right;">
+                  <label for="Pro_id">Project Id:<b style="color: red;">*</b></label>
+                </td>
+                <td style="width: 20%;">
+                  <input type="text" id="Pro_id" name="Pro_id" required style="width: 80%;" />
+                </td>
+              </tr>
+              
+              <tr>
+                <td><input type="text" id="Requisitor" name="Requisitor" value="<%= username %>" hidden/></td>
+                <td></td>
+            
+            </tr>
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>Sl No</th>
+            <th>Part No</th>
+            <th>Description<b style="color: red;">*</b></th>
+            <th>Manufacture</th>
+            <th>Supplier</th>
+            <th>Qty<b style="color: red;">*</b></th>
+            <th>Need By Date</th>
+            <th>Rate<b style="color: red;">*</b></th>
+            <th>Total</th>
+            <th>Invoice</th>
+            <th>Invoice No<b style="color: red;">*</b></th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <input type="text" name="status" value="open" hidden />
+      <div style="float: right;">
+        Grand Total: <input type="text" id="grandTotal" name="gt" placeholder="Grand Total" readonly />
+      </div>
+      <br /><br />
+      <script>
+        function goBack() {
+        }
+    </script>
+      <button type="button" id="addRow">Add Row</button>
+      <button type="button" id="importCsv">Import CSV</button>
+      <button type="button" id="exportCsv">Export CSV</button>
+      <button type="button" id="clearAll">Clear All</button>
+      <br /><br />
+      <input type="submit" value="Submit" class="submit" style="float: right;" />
+    </form>
+    <br><br>
+  </div>
+  <script>
+    $(document).ready(function () {
+      let rowCount = 0;
+
+      function updateRowNumbers() {
+        $("#dataTable tbody tr").each(function (index) {
+          $(this).find("td:first").text(index + 1);
+        });
+      }
+
+      function calculateGrandTotal() {
+        let total = 0;
+        $("#dataTable tbody tr").each(function () {
+          const qty = parseFloat($(this).find("input[name='qty[]']").val()) || 0;
+          const rate = parseFloat($(this).find("input[name='Rate[]']").val()) || 0;
+          const rowTotal = qty * rate;
+          $(this).find("input[name='Total[]']").val(rowTotal.toFixed(2));
+          total += rowTotal;
+        });
+        $("#grandTotal").val(total.toFixed(2));
+      }
+
+      $("#addRow").click(function () {
+        rowCount++;
+        $("#dataTable tbody").append(`
+          <tr>
+            <td>${rowCount}</td>
+            <td><input type="text" name="part_no[]" /></td>
+            <td><input type="text" name="description[]" required /></td>
+            <td><input type="text" name="manufacture[]" /></td>
+            <td><input type="text" name="supplier[]" /></td>
+            <td><input type="number" name="qty[]" min="1" required /></td>
+            <td><input type="date" name="NEED[]" /></td>
+            <td><input type="number" name="Rate[]" min="1" required/></td>
+            <td><input type="number" name="Total[]" readonly /></td>
+            
+<td> <input type="file" name="invoice_pdf[]" multiple /></td>
+            
+
+            <td><input type="text" name="invoice[]" required /></td>
+            <td><button type="button" class="deleteRow" style="background:red;">Delete</button></td>
+          </tr>
+        `);
+      });
+
+      $("#dataTable").on("click", ".deleteRow", function () {
+        $(this).closest("tr").remove();
+        rowCount--;
+        updateRowNumbers();
+        calculateGrandTotal();
+      });
+
+      $("#dataTable").on("input", "input[name='qty[]'], input[name='Rate[]']", calculateGrandTotal);
+
+      $("#clearAll").click(function () {
+        $("#dataTable tbody").empty();
+        rowCount = 0;
+        $("#grandTotal").val("");
+      });
+
+      function downloadCSV(csv, filename) {
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", filename);
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      $("#exportCsv").click(function () {
+        let csv = [];
+        let headers = ["Sl No", "Part No", "Description", "Manufacture", "Supplier", "Qty", "Need By Date", "Rate", "Total", "Invoice", "Invoice No"];
+        csv.push(headers.join(","));
+
+        $("#dataTable tbody tr").each(function () {
+          let row = [];
+          $(this).find("input").each(function () {
+            row.push($(this).val());
+          });
+          csv.push(row.join(","));
+        });
+
+        downloadCSV(csv.join("\n"), "purchase_order.csv");
+      });
+
+      $("#importCsv").click(function () {
+        const fileInput = $("<input type='file' accept='.csv'>");
+        fileInput.on("change", function (e) {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            const lines = event.target.result.split("\n").map(line => line.trim());
+            lines.shift(); // Remove headers
+            $("#dataTable tbody").empty();
+            rowCount = 0;
+
+            lines.forEach(line => {
+              const values = line.split(",");
+              if (values.length >= 11) {
+                rowCount++;
+                $("#dataTable tbody").append(`
+                  <tr>
+                    <td>${rowCount}</td>
+                    <td><input type="text" name="part_no[]" value="${values[1]}" /></td>
+                    <td><input type="text" name="description[]" value="${values[2]}" required /></td>
+                    <td><input type="text" name="manufacture[]" value="${values[3]}" /></td>
+                    <td><input type="text" name="supplier[]" value="${values[4]}" /></td>
+                    <td><input type="number" name="qty[]" value="${values[5]}" min="1" required /></td>
+                    <td><input type="date" name="NEED[]" value="${values[6]}" /></td>
+                    <td><input type="number" name="Rate[]"required value="${values[7]}" min="1" /></td>
+                    <td><input type="number" name="Total[]" value="${values[8]}" disabled /></td>
+                              
+<td> <input type="file" name="invoice_pdf[]" multiple /></td>
+            
+
+
+                    <td><input type="text" name="invoice[]" value="${values[10]}" required /></td>
+                    <td><button type="button" class="deleteRow" style="background:red;">Delete</button></td>
+                  </tr>
+                `);
+              }
+            });
+            calculateGrandTotal();
+          };
+          reader.readAsText(file);
+        });
+        fileInput.trigger("click");
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/icon.jpg">
+    <title>Quotation form</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #b8e7f9;
+        }
+        .main {
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ececec;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(190, 156, 18, 0.2);
+            width: 95%;
+        }
+        .main h2 {
+            color: #3f65c7;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table input {
+            padding: 1px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        .no-border-table, .no-border-table th, .no-border-table td {
+            border: none;
+        }
+        th, td {
+            text-align: center;
+        }
+        .submit, button {
+            background-color: #094af1;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .submit:hover, button:hover {
+            background-color: #2f4aa8;
+        }
+        #csvFileInput {
+            display: none;
+        }
+        .goback {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+        } 
+        .headtag{
+            float:right;
+        }
+        .tag{
+            margin-right: 2%;
+            float:right;
+        }
+        .tag1{
+            margin-right: 0.5%;
+            float:right;
+        }
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; 
+            background-color: rgb(0,0,0); 
+            background-color: rgba(0,0,0,0.4); 
+            padding-top: 60px; 
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        iframe {
+            width: 70%;
+            height: 500px;
+        }
+        @media print {
+            .headtag, .tag, .tag1, .goback, #exportCsv, #printButton {
+                display: none;
+            }
+            .img1 {
+                width: 38%;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .page-border {
+                border: 2px solid black;
+                padding: 1cm;
+                box-sizing: border-box;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+            }
+            #com {
+        display: block; /* Ensure textarea is visible during print */
+    }
+            
+
+        }
+        @page {
+            size: A4; /* Adjust page size as needed */
+            border: 1px solid black; /* Adjust margins if necessary */
+        }
+        @media print {
+            @page {
+                size: portrait; /* Or landscape, depending on your needs */
+            }
+        }
+    </style>
+    <script>
+        // Push a new state to the history stack
+        history.pushState(null, null, location.href);
+        window.addEventListener('popstate', function(event) {
+            // Redirect to the logout endpoint or any other desired page
+            window.location.href = '/admin/logout';
+        });
+        // Optional: Prevent default action for backspace key to avoid navigating back
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Backspace' && event.target.nodeName !== 'INPUT' && event.target.nodeName !== 'TEXTAREA') {
+                event.preventDefault();
+            }
+        });
+        
+        function viewPDF(filename) {
+            const modal = document.getElementById('pdfModal');
+            const modalContent = document.getElementById('pdfModalContent');
+            modal.style.display = 'block';
+            modalContent.src = `/uploads/${filename}`;
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('pdfModal');
+            modal.style.display = 'none';
+        }
+
+        // Close the modal if the admin clicks outside of the modal
+        window.onclick = function(event) {
+            const modal = document.getElementById('pdfModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+    <script>
+        function goBack() {
+            window.location.href = '/admin/status';
+        }
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+<body>
+    <style>
+        /* Hide both image and input by default (screen view) */
+        .edify1 img{
+          display: none;
+        }
+      
+        /* Print styles */
+        @media print {
+          .edify1 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          .main{
+            box-shadow: none; 
+          }
+          .main input{
+            border: none;
+          }
+          .edify1 img,
+          .edify1 input {
+            display: inline-block;
+            border: none;
+          }
+          
+          .edify1 input {
+            float: right; /* Reset float for print */
+          }
+          .pdf{
+            display: none;
+          }
+        }
+      </style>
+      
+      <div class="edify1">
+        <img src="/Edify.png" alt="edify" >
+        <input type="text" placeholder="Enter the PO number" style="float: right;">
+      </div>
+      
+    <br><br><br>
+ <h2 style="color: #123F49;" align="center">Purchase Order Form</h2><br><br><br>
+    <div class="main">
+        
+        <form id="purchaseForm" method="post">
+            <table class="no-border-table">
+                <tr>
+                    <td><label for="Requisition">Requisition #:</label></td>
+                    <td><input type="text" id="Requisition" name="Requisition" value="<%= prDetails.Requisition %>" required disabled></td>
+                    <td><label for="date">Date:</label></td>
+                    <td><input type="text" id="date" name="date" value="<%= prDetails.date %>" required class="dateformat" disabled></td>
+                </tr>
+                <tr>
+                    <td><label for="Customer">Customer Name:</label></td>
+                    <td><input type="text" id="Customer" name="Customer" value="<%= prDetails.Customer %>" required disabled></td>
+                    <td><label for="Requisitor">Requisitor:</label></td>
+                    <td><input type="text" id="Requisitor" name="Requisitor" value="<%= prDetails.Requisitor %>" required disabled></td>
+                </tr>
+                <tr>
+                    <td><label for="Pro_id">Project Id:</label></td>
+                    <td><input type="text" id="Pro_id" name="Pro_id" value="<%= prDetails.Pro_id %>" required disabled></td>
+                </tr>
+            </table>
+
+            <table style="width: 20%; border-collapse: collapse;" class="no-border-table">
+                <tr class="pdf">
+                    <td colspan="2" style="text-align: left; padding-bottom: 10px;">
+                        <h3 style="margin: 0;" >Quote Pdf:</h3>
+                    </td>
+                </tr>
+                <tr class="pdf">
+                    <% if (prDetails.files && Array.isArray(prDetails.files)) { %>
+                        <% for (let i = 0; i < prDetails.files.length; i++) { %>
+                            <td style="padding: 5px; text-align: center; width: auto;">
+                                <% if (prDetails.files[i] && prDetails.files[i].filename) { %>
+                                    <a href="javascript:void(0);" onclick="viewPDF('<%= prDetails.files[i].filename %>')" 
+                                       style="display: inline-block; padding: 5px 10px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; transition: background-color 0.3s ease;">
+                                        View
+                                    </a>
+                                <% } else { %>
+                                    <span style="font-style: italic; color: gray;">N/A</span>
+                                <% } %>
+                            </td>
+                        <% } %>
+                    <% } else { %>
+                        <td colspan="2" style="padding: 5px; text-align: center;">
+                            <span style="font-style: italic; color: gray;">No files available</span>
+                        </td>
+                    <% } %>
+                </tr>
+            </table>
+            
+            <table id="dataTable" class="dataTable1">
+                <thead>
+                    <tr>
+                        <th>Sl No</th>
+                        <th>Part No</th>
+                        <th>Description <b style="color: red;">*</b></th>
+                        <th>Manufacture No</th>
+                        <th>Supplier</th>
+                        <th>Qty <b style="color: red;">*</b></th>
+                        <th>Need by Date</th>
+                        <th>Rate</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th class="pdf">Invoice</th>
+                        <th>Invoice No</th>
+                        <th>Remark</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% descriptions.forEach((entry, index) => { %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td><%= prDetails.Part_No && prDetails.Part_No[index] ? prDetails.Part_No[index] : "" %></td>
+                            <td><%= prDetails.description && prDetails.description[index] ? prDetails.description[index] : '' %></td>
+                            <td><%= prDetails.manufacture && prDetails.manufacture[index] ? prDetails.manufacture[index] : ''%></td>
+                            <td><%= prDetails.supplier && prDetails.supplier[index] ? prDetails.supplier[index] : '' %></td>
+                            <td><%= prDetails.Qty && prDetails.Qty[index] ? prDetails.Qty[index] :'' %></td>
+                            <td><%= prDetails.Need_by_date && prDetails.Need_by_date[index] ? prDetails.Need_by_date[index] : '' %></td>
+                            <td><%= prDetails.rate && prDetails.rate[index] ? prDetails.rate[index] : '' %></td>
+                            <td><%= prDetails.total && prDetails.total[index] ? prDetails.total[index] : '' %></td>
+                            
+                            <td >
+                                <% if (prDetails.part_Status && prDetails.part_Status[index] && prDetails.part_Status[index] != '') { %>
+                                    <% if (prDetails.part_Status[index] == "Approved") { %>
+                                        <img src="/approve.png" alt="status" class="statusImage" style="width: 20px; height: 20px;">
+                                    <% } else if (prDetails.part_Status[index] == "Revise") { %>
+                                        <img src="/revise.png" alt="status" class="statusImage" style="width: 20px; height: 20px;">
+                                    <% } else if (prDetails.part_Status[index] == "Reject") { %>
+                                        <img src="/reject.png" alt="status" class="statusImage" style="width: 20px; height: 20px;">
+                                    <% } %>
+                                <% } else { %>
+                                    N/A
+                                <% } %>
+                            </td>
+                            <td class="pdf">
+                                <% if (prDetails.invoice_file && prDetails.invoice_file[index] && prDetails.invoice_file[index].filename) { %>
+                                  <a href="javascript:void(0);" onclick="viewPDF('<%= prDetails.invoice_file[index].filename %>')">View</a>
+                                <% } else { %>
+                                  N/A
+                                <% } %>
+                              </td>
+                              
+                              
+                            <td><%= prDetails.invoice_no && prDetails.invoice_no[index] ? prDetails.invoice_no[index] : '' %></td>
+                            <td><%= prDetails.Remark && prDetails.Remark[index] ? prDetails.Remark[index] : '' %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+            <button type="button" id="exportCsv">Export CSV</button>
+            <button type="button" id="printButton" onclick="printWithTextArea()">Print PDF</button>
+            <div style="float: right; margin-right: 20%;">Grand Total:
+                <input type="text" id="grandTotal" value="<%= prDetails.grandtotal %>"  disabled>
+            </div>
+        </form>
+   
+    
+    </div>
+    
+     <!-- Modal HTML -->
+     <div id="pdfModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <iframe id="pdfModalContent" src="" frameborder="0"></iframe>
+        </div>
+    </div>
+  <script>
+     $(document).ready(function(){
+        
+        $("#exportCsv").click(function(){
+    let csv = [];
+    const rows = $("#dataTable tbody tr");
+
+    // Get headers
+    const headers = $("#dataTable thead th").map(function(){
+        return $(this).text().trim();
+    }).get();
+   
+    csv.push(headers.join(","));
+
+    // Get data rows
+    rows.each(function(){
+        let rowData = [];
+        $(this).find("td:not(:last-child)").each(function(){
+            const cellText = $(this).text().trim() || $(this).find("input").val();
+            rowData.push(cellText);
+        });
+        csv.push(rowData.join(","));
+    });
+
+    // Download CSV file
+    downloadCSV(csv.join("\n"), 'purchase_order.csv');
+});
+
+
+        function downloadCSV(csv, filename) {
+            let csvFile;
+            let downloadLink;
+
+            // CSV file
+            csvFile = new Blob([csv], { type: 'text/csv' });
+
+            // Download link
+            downloadLink = document.createElement('a');
+
+            // File name
+            downloadLink.download = filename;
+
+            // Create a link to the file
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+
+            // Hide download link
+            downloadLink.style.display = 'none';
+
+            // Add the link to DOM
+            document.body.appendChild(downloadLink);
+
+            // Click download link
+            downloadLink.click();
+        }
+    });
+    function printWithTextArea() {
+    document.getElementById('com').style.display = 'block';
+    window.print();
+    document.getElementById('com').style.display = 'none';
+}
+
+  </script>
+    <img src="/goback.png" alt="Go Back" width="3%" height="5%" class="goback" onclick="goBack()"> <br><br><br>
+    <textarea name="com" id="com" rows="1" cols="100" style="text-align: center; margin-left: 7%; border: 0; display: none;"> This document is computer generated and no signature is required.</textarea>
+</body>
+</html>
